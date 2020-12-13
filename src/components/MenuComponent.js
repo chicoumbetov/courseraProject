@@ -21,7 +21,6 @@ function RenderMenuItem({ dish, onClick }) {
     )
 }
 
-//<RenderMenuItem dish={dish} onClick={props.onClick}
 const Menu = (props) => {
     const menu = props.dishes.map((dish) => {
         console.log("menu render")
