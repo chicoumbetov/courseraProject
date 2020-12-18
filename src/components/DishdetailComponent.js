@@ -6,6 +6,7 @@ import {
 } from "reactstrap";
 import { Link } from 'react-router-dom';
 import { Control, Errors, LocalForm } from "react-redux-form";
+import { Loading } from './LoadingComponent';
 
 //receives value and checks if value is greater than 0
 const required = (val) => (val) && (val.length >= 0);
@@ -172,7 +173,26 @@ class CommentForm extends Component {
 const DishDetail = (props) => {
     console.log("Dishdetail render invoked")
 
-    if (props.dish != null) {
+    if (props.isLoading) {
+        return(
+            <div className="container">
+                <div className="row">
+                    <Loading />
+                </div>
+            </div>
+        )
+    }
+    else if (props.errMess) {
+        return(
+            <div className="container">
+                <div className="row">
+                    <h4>{props.errMess}</h4>
+                </div>
+            </div>
+        )
+    }
+
+    else if (props.dish != null) {
         return (
             <div className="container">
 
