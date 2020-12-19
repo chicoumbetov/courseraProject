@@ -2,24 +2,29 @@ import * as ActionTypes from './ActionTypes';
 //import { DISHES } from '../shared/dishes';
 import { baseUrl } from '../shared/baseUrl';
 
-export const addComment = (dishId, rating, author, comment) => ({
+export const addComment = (comment) => ({
     type: ActionTypes.ADD_COMMENT,
-    payload: {
+    payload: comment
+})
+
+//dispatch must be here since this is thunk:
+export const postComment = (dishId, rating, author, comment) => (dispatch) => {
+    const newComment = {
         dishId: dishId,
         rating: rating,
         author: author,
         comment: comment
     }
-})
+    newComment.date = new Date().toISOString()
 
-//1
-//dishes fetching
-//middleware
-export const fetchDishes = () => (dispatch) => {
-    dispatch(dishesLoading(true));
-
-    return fetch(baseUrl + 'dishes')
-    //error handler
+    return fetch(baseUrl + 'comments', {
+        method: 'POST',
+        body: JSON.stringify(newComment),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
         .then(response => {
             if (response.ok) {
                 return response;
@@ -30,10 +35,39 @@ export const fetchDishes = () => (dispatch) => {
                 throw error;
             }
         },
-        error => {
+            error => {
                 var errmess = new Error(error.message);
                 throw errmess;
-        })
+            })
+            .then(response => response.json())
+            .then(response => dispatch(addComment(response)))
+            .catch(error => { console.log('Post comments ', error.message)
+                alert('Your comment could not be posted\nError: '+ error.message)}) //optional alert
+
+}
+
+//1
+//dishes fetching
+//middleware
+export const fetchDishes = () => (dispatch) => {
+    dispatch(dishesLoading(true));
+
+    return fetch(baseUrl + 'dishes')
+        //error handler
+        .then(response => {
+            if (response.ok) {
+                return response;
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText);
+                error.response = response;
+                throw error;
+            }
+        },
+            error => {
+                var errmess = new Error(error.message);
+                throw errmess;
+            })
         //callback setup functions:
         .then(response => response.json())
         .then(dishes => dispatch(addDishes(dishes)))
@@ -70,10 +104,10 @@ export const fetchComments = () => (dispatch) => {
                 throw error;
             }
         },
-        error => {
+            error => {
                 var errmess = new Error(error.message);
                 throw errmess;
-        })
+            })
         .then(response => response.json())
         .then(comments => dispatch(addComments(comments)))
         .catch(error => dispatch(commentsFailed(error.message)))
@@ -105,10 +139,10 @@ export const fetchPromos = () => (dispatch) => {
                 throw error;
             }
         },
-        error => {
+            error => {
                 var errmess = new Error(error.message);
                 throw errmess;
-        })
+            })
         .then(response => response.json())
         .then(promos => dispatch(addPromos(promos)))
         .catch(error => dispatch(promosFailed(error.message)))

@@ -15,9 +15,9 @@ export const Comments = (state = {
             return { ...state, isLoading: false, errMess: action.payload, comments: [] }
 
         case ActionTypes.ADD_COMMENT:
+            //this will take care adding comment into redux store
             var comment = action.payload;
-            comment.id = state.comments.length;
-            comment.date = new Date().toISOString();
+            //comment.id = state.comments.length;   //no need since server automatically create it
             return { ...state, comments: state.comments.concat(comment) };
         default:
             return state;
