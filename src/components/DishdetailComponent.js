@@ -7,9 +7,10 @@ import {
 import { Link } from 'react-router-dom';
 import { Control, Errors, LocalForm } from "react-redux-form";
 import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
 
 //receives value and checks if value is greater than 0
-const required = (val) => (val) && (val.length >= 0);
+//const required = (val) => (val) && (val.length >= 0);
 //receives lenth as a parameter and value. 
 //This will check and make sure that entered length is below or above of specified length.
 const maxLength = (len) => (val) => !(val) || (val.length <= len)
@@ -20,7 +21,7 @@ const RenderDish = ({ dish }) => {
     return (
         <div className="col-12 col-md-5 m-1">
             <Card  >
-                <CardImg top src={dish.image} alt={dish.name} />
+                <CardImg top src={baseUrl + dish.image} alt={dish.name} />
                 <CardBody>
                     <CardTitle>{dish.name}</CardTitle>
                     <CardText>{dish.description}</CardText>
@@ -111,13 +112,12 @@ class CommentForm extends Component {
                                                 placeholder="Your name"
                                                 className="form-control"
                                                 validators={{
-                                                    required, minLength: minLength(3), maxLength: maxLength(15)
+                                                    minLength: minLength(3), maxLength: maxLength(15)
                                                 }} />
 
                                             <Errors className="text-danger" model=".author"
                                                 id="author"
                                                 show="touched" messages={{
-                                                    required: "Required",
                                                     minLength: "Must be greater than 3 characters",
                                                     maxLength: "Must be 15 characters or less"
                                                 }}
